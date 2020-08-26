@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="container">
+        <p>Motor running at <span id="level"></span></p>
+    </div>
+
+    <div class="container">
+        <input style="width: 25%;" type="range" id="inp-level" min="0" max="100">
+        <span id="new-level"></span>
+    </div>
+    <script>
+        const host = 'http://192.168.1.114'
+        const fetchLevel = () => fetch(host + '/level').then(res => res.json())
+        const requestLevelChange = (value) => {
+            const data = new URLSearchParams();
+            data.append("value", value)
+            fetch(host + '/level', {
+                method: 'POST',
+                body: data
+            }).then(console.log)
+        }
+
+        const displayLevel = () => {
+            return fetchLevel().then(lvl => {
+                let val = Math.round(lvl / 255 * 100);
+                document.getElementById('level').textContent = val + "%"
+                return val;
+            })
+        }
+        const changeLevel = () => {
+            let val = document.getElementById('inp-level').value
+            val = parseInt(val) / 100 * 255 ;
+            requestLevelChange(val);
+        }
+
+        setInterval(displayLevel, 1000);
+        document.getElementById('inp-level').addEventListener('change', ev => {
+            document.getElementById('new-level').textContent = document.getElementById('inp-level').value + '%'
+            changeLevel();
+        })
+        document.getElementById('inp-level').addEventListener('input', ev => {
+            document.getElementById('new-level').textContent = document.getElementById('inp-level').value + '%'
+        })
+        
+        displayLevel().then((val) => {
+            document.getElementById('inp-level').value = val;
+            document.getElementById('new-level').textContent = document.getElementById('inp-level').value + '%'
+        })
+
+
+    </script>
+    <style>
+        .container {
+            display: flex;
+            align-items: center;
+        }
+
+        #angle-slider {
+            margin-right: 2em;
+        }
+    </style>
+</body>
+
+</html>
