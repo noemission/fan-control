@@ -69,7 +69,7 @@ ICACHE_RAM_ATTR void zcDetectISR()
     {
       digitalWrite(pwmPin, 0);
 
-      // edo ginete olo to skato???
+      // edo ginete oli i douleia?
       int dimDelay = 30 * (255 - curBrightness) + 400; //400
       hw_timer_arm(dimDelay);
     }
